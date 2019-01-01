@@ -32,8 +32,10 @@ export default async function httpRoute(req, res) {
   };
   switch (req.method) {
     case 'OPTIONS':
+      debugger;
       res.writeHead(200, responseHeader);
       res.end();
+break;
     case 'POST':
     case 'PUT':
      

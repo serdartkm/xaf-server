@@ -9,6 +9,7 @@ export default async function changePassword({ req, res, collection }) {
 
   try {
     const { emailorusername, password, current, confirm, token } = req.body;
+  debugger;
     let user = null;
     let resBcrypt = null;
     debugger;
@@ -54,9 +55,10 @@ export default async function changePassword({ req, res, collection }) {
         errors.push(httpStatus.emptyStringNotValid);
       }
       // user sent empty password 409 tested -----------------------------------
+      debugger;
       if (
         validations.isEmptyPassword({ password }) ||
-        validations.isValidPasspword({ password })
+        !validations.isValidPasspword({ password })
       ) {
         debugger;
         errors.push(httpStatus.passwordInvalid);

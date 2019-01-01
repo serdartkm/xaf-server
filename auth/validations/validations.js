@@ -23,8 +23,10 @@ export function isValidPasspword({ password }) {
   debugger;
   const psw = new RegExp(passwordRegex);
   if (psw.test(password)) {
+    debugger;
     return true;
   } else {
+    debugger;
     return false;
   }
 }
