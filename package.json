@@ -1,0 +1,13 @@
+{
+  "name": "xaf-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon"
+  },
+  "dependencies": {
+    "mongodb": "^3.5.2",
+    "nodemon": "^2.0.2"
+  }
+}
