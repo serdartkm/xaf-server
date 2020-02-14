@@ -2,46 +2,11 @@ const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017';
 const dbName = 'visa';
 const client = new MongoClient(url);
-module.exports.createData = function(req, res) {
+module.exports.insertOne = function(req, res) {
+  debugger;
   const { params } = req;
-  console.log('req.body', req.body);
-  client.connect((err, client) => {
-    if (err) {
-      console.log('err connecting--', err);
-      res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify(err));
-      res.end();
-    } else {
-      const db = client.db('visa');
-      db.collection(params['document']).insertOne(
-        { ...req.body },
-        (err, result) => {
-          if (err) {
-            console.log('err inserting--', err);
-            res.setHeader('Content-Type', 'application/json');
-            res.write(JSON.stringify(err));
-            res.end();
-          } else {
-            console.log('result--', result);
-            res.setHeader('Content-Type', 'application/json');
-            res.write(JSON.stringify(result));
-            res.end();
-          }
-          client.close();
-        }
-      );
-    }
-  });
-};
-module.exports.updateData = function(req, res) {
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Update Calls\n');
-};
-module.exports.deleteData = function(req, res) {
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Delete Calls\n');
-};
-module.exports.findData = function(req, res) {
+  const doc = req.body;
+
   client.connect((err, client) => {
     if (err) {
       res.setHeader('Content-Type', 'application/json');
@@ -49,18 +14,101 @@ module.exports.findData = function(req, res) {
       res.end();
     } else {
       const db = client.db('visa');
-      db.collection(params['document']).find({}, (err, result) => {
+      db.collection(params['document']).insertOne(doc, (err, result) => {
         if (err) {
+          const error = err;
           res.setHeader('Content-Type', 'application/json');
-          res.write(JSON.stringify(err));
+          res.write(JSON.stringify(error));
           res.end();
         } else {
           res.setHeader('Content-Type', 'application/json');
           res.write(JSON.stringify(result));
           res.end();
         }
-        client.close();
       });
+    }
+  });
+};
+module.exports.updateOne = function(req, res) {
+  debugger;
+  const { params } = req;
+  const { doc, filter } = req.body;
+  delete doc._id;
+  client.connect((err, client) => {
+    if (err) {
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(err));
+      res.end();
+    } else {
+      const db = client.db('visa');
+      db.collection(params['document']).updateOne(
+        filter,
+        { $set: { doc } },
+        (err, result) => {
+          if (err) {
+            const error = err;
+            res.setHeader('Content-Type', 'application/json');
+            res.write(JSON.stringify(error));
+            res.end();
+          } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.write(JSON.stringify(result));
+            res.end();
+          }
+        }
+      );
+    }
+  });
+};
+module.exports.deleteOne = function(req, res) {
+  debugger;
+  const { params } = req;
+  const { doc, filter } = req.body;
+  delete doc._id;
+  client.connect((err, client) => {
+    if (err) {
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(err));
+      res.end();
+    } else {
+      const db = client.db('visa');
+      db.collection(params['document']).deleteOne(filter, (err, result) => {
+        if (err) {
+          const error = err;
+          res.setHeader('Content-Type', 'application/json');
+          res.write(JSON.stringify(error));
+          res.end();
+        } else {
+          res.setHeader('Content-Type', 'application/json');
+          res.write(JSON.stringify(result));
+          res.end();
+        }
+      });
+    }
+  });
+};
+module.exports.find = function(req, res) {
+  const { params } = req;
+  client.connect((err, client) => {
+    if (err) {
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(err));
+      res.end();
+    } else {
+      const db = client.db('visa');
+      db.collection(params['document'])
+        .find({})
+        .toArray()
+        .then(result => {
+          res.setHeader('Content-Type', 'application/json');
+          res.write(JSON.stringify(result));
+          res.end();
+        })
+        .catch(err => {
+          res.setHeader('Content-Type', 'application/json');
+          res.write(JSON.stringify(err));
+          res.end();
+        });
     }
   });
 };
