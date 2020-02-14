@@ -2,6 +2,22 @@ const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://localhost:27017';
 const dbName = 'visa';
 const client = new MongoClient(url);
+
+function handlePromise({ promise, res }) {
+  promise
+    .then(result => {
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(result));
+      res.end();
+    })
+    .catch(err => {
+      const error = err;
+      res.setHeader('Content-Type', 'application/json');
+      res.write(JSON.stringify(error));
+      res.end();
+    });
+}
+
 module.exports.insertOne = function(req, res) {
   debugger;
   const { params } = req;
@@ -14,18 +30,8 @@ module.exports.insertOne = function(req, res) {
       res.end();
     } else {
       const db = client.db('visa');
-      db.collection(params['document']).insertOne(doc, (err, result) => {
-        if (err) {
-          const error = err;
-          res.setHeader('Content-Type', 'application/json');
-          res.write(JSON.stringify(error));
-          res.end();
-        } else {
-          res.setHeader('Content-Type', 'application/json');
-          res.write(JSON.stringify(result));
-          res.end();
-        }
-      });
+      let promise = db.collection(params['document']).insertOne(doc);
+      handlePromise({ promise, res });
     }
   });
 };
@@ -96,19 +102,11 @@ module.exports.find = function(req, res) {
       res.end();
     } else {
       const db = client.db('visa');
-      db.collection(params['document'])
+      let promise = db
+        .collection(params['document'])
         .find({})
-        .toArray()
-        .then(result => {
-          res.setHeader('Content-Type', 'application/json');
-          res.write(JSON.stringify(result));
-          res.end();
-        })
-        .catch(err => {
-          res.setHeader('Content-Type', 'application/json');
-          res.write(JSON.stringify(err));
-          res.end();
-        });
+        .toArray();
+      handlePromise({ promise, res });
     }
   });
 };
