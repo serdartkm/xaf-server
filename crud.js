@@ -1,112 +1,68 @@
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 const url = 'mongodb://localhost:27017';
 const dbName = 'visa';
 const client = new MongoClient(url);
-
-function handlePromise({ promise, res }) {
-  promise
-    .then(result => {
-      res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify(result));
-      res.end();
-    })
-    .catch(err => {
-      const error = err;
-      res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify(error));
-      res.end();
-    });
+const getParams = require('./getParams');
+function handleResponse({ result, res }) {
+  debugger;
+  res.setHeader('Content-Type', 'application/json');
+  res.write(JSON.stringify(result));
+  res.end();
 }
 
-module.exports.insertOne = function(req, res) {
+module.exports = async function crudOperation(req, res) {
   debugger;
-  const { params } = req;
-  const doc = req.body;
+  let result = null;
+  const params = getParams(req);
+  let doc = req.body;
+  let _id = doc._id;
+  const { url } = req;
+  let filter = null;
+  try {
+    const clnt = await client.connect();
+    const db = clnt.db('visa');
+    switch (true) {
+      case url.includes('/insertOne'):
+        debugger;
+        result = await db.collection(params['document']).insertOne(doc);
+        await handleResponse({ result, res });
+        break;
+      case url.includes('/updateOne'):
+        filter = { _id: new ObjectID(doc._id) };
+        delete doc._id;
+        debugger;
+        result = await db
+          .collection(params['document'])
+          .updateOne(filter, { $set: { doc } });
+        await handleResponse({ result: { ...result, _id }, res });
+        debugger;
+        break;
+      case url.includes('/deleteOne'):
+        debugger;
+        filter = { _id: new ObjectID(_id) };
+        debugger;
+        result = await db.collection(params['document']).deleteOne(filter);
+        await handleResponse({ result: { ...result, _id }, res });
+        debugger;
+        break;
+      case url.includes('/find'):
+        result = await db
+          .collection(params['document'])
+          .find({})
+          .toArray();
+        await handleResponse({ result, res });
 
-  client.connect((err, client) => {
-    if (err) {
-      res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify(err));
-      res.end();
-    } else {
-      const db = client.db('visa');
-      let promise = db.collection(params['document']).insertOne(doc);
-      handlePromise({ promise, res });
+        debugger;
+        break;
+      default:
+        res.setHeader('Content-Type', 'text/plain');
+        res.end('Path no spesified\n');
     }
-  });
-};
-module.exports.updateOne = function(req, res) {
-  debugger;
-  const { params } = req;
-  const { doc, filter } = req.body;
-  delete doc._id;
-  client.connect((err, client) => {
-    if (err) {
-      res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify(err));
-      res.end();
-    } else {
-      const db = client.db('visa');
-      db.collection(params['document']).updateOne(
-        filter,
-        { $set: { doc } },
-        (err, result) => {
-          if (err) {
-            const error = err;
-            res.setHeader('Content-Type', 'application/json');
-            res.write(JSON.stringify(error));
-            res.end();
-          } else {
-            res.setHeader('Content-Type', 'application/json');
-            res.write(JSON.stringify(result));
-            res.end();
-          }
-        }
-      );
-    }
-  });
-};
-module.exports.deleteOne = function(req, res) {
-  debugger;
-  const { params } = req;
-  const { doc, filter } = req.body;
-  delete doc._id;
-  client.connect((err, client) => {
-    if (err) {
-      res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify(err));
-      res.end();
-    } else {
-      const db = client.db('visa');
-      db.collection(params['document']).deleteOne(filter, (err, result) => {
-        if (err) {
-          const error = err;
-          res.setHeader('Content-Type', 'application/json');
-          res.write(JSON.stringify(error));
-          res.end();
-        } else {
-          res.setHeader('Content-Type', 'application/json');
-          res.write(JSON.stringify(result));
-          res.end();
-        }
-      });
-    }
-  });
-};
-module.exports.find = function(req, res) {
-  const { params } = req;
-  client.connect((err, client) => {
-    if (err) {
-      res.setHeader('Content-Type', 'application/json');
-      res.write(JSON.stringify(err));
-      res.end();
-    } else {
-      const db = client.db('visa');
-      let promise = db
-        .collection(params['document'])
-        .find({})
-        .toArray();
-      handlePromise({ promise, res });
-    }
-  });
+  } catch (error) {
+    debugger;
+    res.setHeader('Content-Type', 'application/json');
+    res.write(JSON.stringify(error));
+    res.end();
+  }
 };
