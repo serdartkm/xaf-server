@@ -29,7 +29,7 @@ module.exports = async function crudOperation(req, res) {
         await handleResponse({ result, res });
         break;
       case url.includes('/updateOne'):
-        filter = { _id: new ObjectID(doc._id) };
+        filter = { _id: new ObjectID(_id) };
         delete doc._id;
         debugger;
         result = await db
@@ -47,6 +47,7 @@ module.exports = async function crudOperation(req, res) {
         debugger;
         break;
       case url.includes('/find'):
+        debugger;
         result = await db
           .collection(params['document'])
           .find({})
