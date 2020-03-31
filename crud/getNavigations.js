@@ -1,4 +1,9 @@
-export default function getNavigations({ metaData }) {
+import visaMetaData from './visaMetaData/mockMetaData';
+import stockMetaData from './stockMetaData/stockMetaData';
+export default  function getNavigations({ appName }) {
+
+  let metaData = appName === 'visa' ? visaMetaData : stockMetaData;
+
   let navigations = metaData
     .filter(d => !d.navigations)
     .map(s => ({ navigation: s.objectName, objectName: s.objectName }));
@@ -14,5 +19,5 @@ export default function getNavigations({ metaData }) {
       });
     });
 
-  return navigations;
-};
+  return  navigations;
+}

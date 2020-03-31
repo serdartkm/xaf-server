@@ -22,12 +22,13 @@ export default async function crudOperation(req, res) {
 
   let filter = apiurl.parse(req.url, true).query.filter;
   let document = apiurl.parse(req.url, true).query.document;
+  let appName = apiurl.parse(req.url, true).query.appName;
   let doc = req.body;
   const { url } = req;
 
   try {
     const clnt = await client.connect();
-    const db = clnt.db('visadb');
+    const db = clnt.db(appName);
     let obj;
     let updateResult;
     let deleteResult;
@@ -68,7 +69,8 @@ export default async function crudOperation(req, res) {
         }
 
         break;
-      case url.includes('/find'):
+      case url.includes('/list'):
+        debugger;
         result = await db
           .collection(document)
           .find({})
@@ -78,7 +80,10 @@ export default async function crudOperation(req, res) {
 
         break;
       case url.includes('/navigations'):
-        const navigations = getNavigations();
+        let navs = getNavigations({ appName });
+
+        handleResponse({ result: navs, statusCode: 200, res });
+
         break;
       default:
         res.setHeader('Content-Type', 'text/plain');
