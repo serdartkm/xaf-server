@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-//import crudOperation from './crud/crud';
+import crudOperation from './crud/crud';
 
 export default  function httpRoute(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,14 +15,14 @@ export default  function httpRoute(req, res) {
         if (data.length > 0) {
           const body = JSON.parse(data);
           req.body = body;
-          //   crudOperation(req, res, dbName);
+             crudOperation(req, res);
         }
       });
       break;
     case 'GET':
-      //  crudOperation(req, res, dbName);
+        crudOperation(req, res);
       break;
     default:
-    //  crudOperation(req, res, dbName);
+      crudOperation(req, res);
   }
 }

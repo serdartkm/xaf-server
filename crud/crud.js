@@ -1,5 +1,6 @@
 import getNavigations from './getNavigations';
-import { MongoClient, ObjectID } from 'mongodb';
+const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectId;
 import apiurl from 'url';
 
 const url = 'mongodb://localhost:27017';
@@ -16,7 +17,7 @@ function handleResponse({ result, res, statusCode }) {
   res.end();
 }
 
-export default async function crudOperation(req, res, dbName) {
+export default async function crudOperation(req, res) {
   let result = null;
 
   let filter = apiurl.parse(req.url, true).query.filter;
@@ -26,7 +27,7 @@ export default async function crudOperation(req, res, dbName) {
 
   try {
     const clnt = await client.connect();
-    const db = clnt.db(dbName);
+    const db = clnt.db('visadb');
     let obj;
     let updateResult;
     let deleteResult;
