@@ -1,12 +1,14 @@
-const MongoClient = require('mongodb').MongoClient;
-const ObjectID = require('mongodb').ObjectID;
+import getNavigations from './getNavigations';
+import { MongoClient, ObjectID } from 'mongodb';
+import apiurl from 'url';
+
 const url = 'mongodb://localhost:27017';
 
 const client = new MongoClient(url, {
   useUnifiedTopology: true,
   useNewUrlParser: true
 });
-const getParams = require('./getParams');
+
 function handleResponse({ result, res, statusCode }) {
   res.setHeader('Content-Type', 'application/json');
   res.statusCode = statusCode;
@@ -14,12 +16,13 @@ function handleResponse({ result, res, statusCode }) {
   res.end();
 }
 
-module.exports = async function crudOperation(req, res, dbName) {
+export default async function crudOperation(req, res, dbName) {
   let result = null;
-  const params = getParams(req);
+
+  let filter = apiurl.parse(req.url, true).query.filter;
+  let document = apiurl.parse(req.url, true).query.document;
   let doc = req.body;
   const { url } = req;
-  let filter = null;
 
   try {
     const clnt = await client.connect();
@@ -29,7 +32,7 @@ module.exports = async function crudOperation(req, res, dbName) {
     let deleteResult;
     switch (true) {
       case url.includes('/insertOne'):
-        result = await db.collection(params['document']).insertOne(doc);
+        result = await db.collection(document).insertOne(doc);
 
         handleResponse({
           result: { _id: result.insertedId },
@@ -43,7 +46,7 @@ module.exports = async function crudOperation(req, res, dbName) {
         delete obj._id;
         filter = { _id: new ObjectID(doc._id) };
         updateResult = await db
-          .collection(params['document'])
+          .collection(document)
           .updateOne(filter, { $set: { ...obj } });
 
         if (updateResult.result.nModified === 1) {
@@ -55,9 +58,7 @@ module.exports = async function crudOperation(req, res, dbName) {
         break;
       case url.includes('/deleteOne'):
         filter = { _id: new ObjectID(doc._id) };
-        deleteResult = await db
-          .collection(params['document'])
-          .deleteOne(filter);
+        deleteResult = await db.collection(document).deleteOne(filter);
 
         if (deleteResult.deletedCount === 1) {
           handleResponse({ result: {}, statusCode: 202, res });
@@ -68,12 +69,15 @@ module.exports = async function crudOperation(req, res, dbName) {
         break;
       case url.includes('/find'):
         result = await db
-          .collection(params['document'])
+          .collection(document)
           .find({})
           .toArray();
 
         handleResponse({ result, statusCode: 200, res });
 
+        break;
+      case url.includes('/navigations'):
+        const navigations = getNavigations();
         break;
       default:
         res.setHeader('Content-Type', 'text/plain');
@@ -84,4 +88,4 @@ module.exports = async function crudOperation(req, res, dbName) {
     res.write(JSON.stringify(error));
     res.end();
   }
-};
+}
