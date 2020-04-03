@@ -12,7 +12,7 @@
         "--inspect-brk",
         "${workspaceRoot}/node_modules/jest/bin/jest.js",
         "--runInBand",
-        "generateObject.test.js"
+        "login.test.js"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",

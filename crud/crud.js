@@ -25,7 +25,7 @@ export default async function crudOperation(req, res) {
   let appName = apiurl.parse(req.url, true).query.appName;
   let doc = req.body;
   const { url } = req;
-
+  debugger;
   try {
     const clnt = await client.connect();
     const db = clnt.db(appName);
