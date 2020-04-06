@@ -47,6 +47,7 @@ export function isEmptyPassword({ password }) {
 }
 
 export function isValidUsernameOrEmail({ emailorusername }) {
+  debugger
   const email = new RegExp(emailRegex);
   const username = new RegExp(usernameRegex);
   if (email.test(emailorusername) || username.test(emailorusername)) {
