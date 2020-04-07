@@ -1,3 +1,4 @@
+require('dotenv').config();
 import httpRoute from './http-route';
 import http from 'http';
 

@@ -14,10 +14,12 @@ export default async function ({ req, res, collection }) {
 
     //user sent empty email or username 410 tested----------------------------
     if (validations.isEmptyEmailOrUsername({ emailorusername })) {
+      debugger
       errors.push(httpStatus.emailorusernameNotValid);
     }
     // user sent empty password 409 tested -----------------------------------
     if (validations.isEmptyPassword({ password })) {
+      debugger
       errors.push(httpStatus.emptyStringNotValid);
     }
     if (errors.length > 0) {
