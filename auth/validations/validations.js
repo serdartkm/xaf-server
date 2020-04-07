@@ -1,8 +1,8 @@
 import { emailRegex, usernameRegex, passwordRegex } from './validationRegex';
 
-export function isValidUsername({ emailorusername }) {
-  const username = new RegExp(usernameRegex);
-  if (username.test(emailorusername)) {
+export function isValidUsername({ username }) {
+  const usrname = new RegExp(usernameRegex);
+  if (usrname.test(username)) {
     return true;
   } else {
     return false;
@@ -47,12 +47,48 @@ export function isEmptyPassword({ password }) {
 }
 
 export function isValidUsernameOrEmail({ emailorusername }) {
-  debugger
+  debugger;
   const email = new RegExp(emailRegex);
   const username = new RegExp(usernameRegex);
   if (email.test(emailorusername) || username.test(emailorusername)) {
     return true;
   } else {
     return false;
+  }
+}
+
+export async function userNameIsTaken({ username, collection }, cb) {
+  debugger;
+  try {
+    const user = await collection.findOne({ username });
+    debugger;
+    if (user) {
+      debugger;
+      cb();
+    } else {
+      debugger;
+      return false;
+    }
+  } catch (error) {
+    debugger;
+    throw new Error(error);
+  }
+}
+
+export async function emailIsRegistered({ email, collection }, cb) {
+  debugger;
+  try {
+    const user = await collection.findOne({ email });
+    debugger;
+    if (user) {
+      debugger;
+      cb();
+    } else {
+      debugger;
+      return false;
+    }
+  } catch (error) {
+    debugger;
+    throw new Error(error);
   }
 }

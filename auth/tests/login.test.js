@@ -4,7 +4,6 @@ import httpRoute from '../../http-route';
 const request = require('supertest');
 describe('login.test.js', () => {
   it('empty useroremail and password 410,409', (done) => {
-
     request(httpRoute)
       .get('/auth/login')
       .set('Accept', 'application/json')
@@ -12,7 +11,6 @@ describe('login.test.js', () => {
       .end(done);
   });
   it('emailorusernameNotValid 410', (done) => {
-
     request(httpRoute)
       .get('/auth/login?password=DragondFFFly!&emailorusername=2333')
       .set('Accept', 'application/json')
@@ -23,7 +21,6 @@ describe('login.test.js', () => {
   it('emailIsNotRegistered 408', (done) => {
     global.findOne = null;
 
-
     request(httpRoute)
       .get('/auth/login?password=DragondFFFly!&emailorusername=test@gmail.com')
       .set('Accept', 'application/json')
@@ -32,7 +29,7 @@ describe('login.test.js', () => {
   });
   it('usernameIsNotRegistered 411', (done) => {
     global.findOne = null;
-  
+
     request(httpRoute)
       .get('/auth/login?password=DragondFFFly!&emailorusername=tkmhouse')
       .set('Accept', 'application/json')
@@ -44,7 +41,6 @@ describe('login.test.js', () => {
     global.findOne = { password: '123' }; //mongodb
     global.compare = false; //bcrypt
 
-
     request(httpRoute)
       .get('/auth/login?password=DragondFFFly!&emailorusername=tkmhouse')
       .set('Accept', 'application/json')
@@ -55,8 +51,6 @@ describe('login.test.js', () => {
   it('valid email  and wrong password', (done) => {
     global.findOne = { password: '123' }; //mongodb
     global.compare = false; //bcrypt
-
-
 
     request(httpRoute)
       .get(
@@ -71,7 +65,6 @@ describe('login.test.js', () => {
     global.compare = true; //bcrypt
     global.sign = 'test'; //jwt
 
-
     request(httpRoute)
       .get('/auth/login?password=DragondFFFly!&emailorusername=tkmhouse')
       .set('Accept', 'application/json')
@@ -83,7 +76,6 @@ describe('login.test.js', () => {
     global.findOne = { password: 'DragondFFFly!', _id: '123' }; //mongodb
     global.compare = true; //bcrypt
     global.sign = 'test'; //jwt
- 
 
     request(httpRoute)
       .get(

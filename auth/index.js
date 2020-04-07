@@ -5,18 +5,18 @@ const bcrypt = require('bcrypt');
 const ObjectID = require('mongodb').ObjectId;
 import apiurl from 'url';
 import login from './login';
-const signup = require('./signup');
+import signup from './signup';
 const changePassword = require('./changePassword');
 
 const profile = require('./profile');
 const recover = require('./recover');
 
-export default function(req, res) {
+export default function (req, res) {
   const { url } = req;
   const collectionName = 'users';
   const database = req.client.db('auth');
   const collection = database.collection(collectionName);
-  debugger
+  debugger;
   switch (true) {
     case url.includes('/login'):
       debugger;
@@ -37,4 +37,4 @@ export default function(req, res) {
     default:
       return null;
   }
-};
+}

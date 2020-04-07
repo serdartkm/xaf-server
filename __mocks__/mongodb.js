@@ -8,7 +8,11 @@ export class MongoClient {
           collection: () => {
             return {
               findOne: function () {
+                debugger;
                 return global.findOne;
+              },
+              insertOne: () => {
+                return global.insertOne;
               },
             };
           },
