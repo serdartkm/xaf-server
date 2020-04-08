@@ -7,13 +7,15 @@ describe('login.test.js', () => {
     request(httpRoute)
       .get('/auth/login')
       .set('Accept', 'application/json')
+      .set('authorization', 'Basic Og==')
       .expect(400, { errors: ['410', '409'] })
       .end(done);
   });
   it('emailorusernameNotValid 410', (done) => {
     request(httpRoute)
-      .get('/auth/login?password=DragondFFFly!&emailorusername=2333')
+      .get('/auth/login')
       .set('Accept', 'application/json')
+      .set('authorization', 'Basic MjMzMzpEcmFnb25kRkZGbHkh')
       .expect(400, { errors: ['410'] })
       .end(done);
   });
@@ -22,8 +24,9 @@ describe('login.test.js', () => {
     global.findOne = null;
 
     request(httpRoute)
-      .get('/auth/login?password=DragondFFFly!&emailorusername=test@gmail.com')
+      .get('/auth/login')
       .set('Accept', 'application/json')
+      .set('authorization', 'Basic dGVzdEBnbWFpbC5jb206RHJhZ29uZEZGRmx5IQ==')
       .expect(400, { errors: ['408'] })
       .end(done);
   });
@@ -31,8 +34,9 @@ describe('login.test.js', () => {
     global.findOne = null;
 
     request(httpRoute)
-      .get('/auth/login?password=DragondFFFly!&emailorusername=tkmhouse')
+      .get('/auth/login')
       .set('Accept', 'application/json')
+      .set('authorization', 'Basic dGttaG91c2U6RHJhZ29uZEZGRmx5IQ==')
       .expect(400, { errors: ['411'] })
       .end(done);
   });
@@ -42,8 +46,9 @@ describe('login.test.js', () => {
     global.compare = false; //bcrypt
 
     request(httpRoute)
-      .get('/auth/login?password=DragondFFFly!&emailorusername=tkmhouse')
+      .get('/auth/login')
       .set('Accept', 'application/json')
+      .set('authorization', 'Basic dGttaG91c2U6RHJhZ29uZEZGRmx5IQ==')
       .expect(400, { errors: ['401'] })
       .end(done);
   });
@@ -53,10 +58,12 @@ describe('login.test.js', () => {
     global.compare = false; //bcrypt
 
     request(httpRoute)
-      .get(
-        '/auth/login?password=DragondFFFly!&emailorusername=tkmhouse@gmail.com'
-      )
+      .get('/auth/login')
       .set('Accept', 'application/json')
+      .set(
+        'authorization',
+        'Basic dGttaG91c2VAZ21haWwuY29tOkRyYWdvbmRGRkZseSE='
+      )
       .expect(400, { errors: ['401'] })
       .end(done);
   });
@@ -66,8 +73,9 @@ describe('login.test.js', () => {
     global.sign = 'test'; //jwt
 
     request(httpRoute)
-      .get('/auth/login?password=DragondFFFly!&emailorusername=tkmhouse')
+      .get('/auth/login')
       .set('Accept', 'application/json')
+      .set('authorization', 'Basic dGttaG91c2U6RHJhZ29uZEZGRmx5IQ==')
       .expect(200, { token: 'test' })
       .end(done);
   });
@@ -78,10 +86,9 @@ describe('login.test.js', () => {
     global.sign = 'test'; //jwt
 
     request(httpRoute)
-      .get(
-        '/auth/login?password=DragondFFFly!&emailorusername=tkmhouse@gmail.com'
-      )
+      .get('/auth/login')
       .set('Accept', 'application/json')
+      .set('authorization', 'Basic dGttaG91c2U6RHJhZ29uZEZGRmx5IQ==')
       .expect(200, { token: 'test' })
       .end(done);
   });

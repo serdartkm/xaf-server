@@ -70,7 +70,7 @@ export default async function ({ req, res, collection }) {
         debugger;
         const hash = await bcrypt.hash(password, salt);
         debugger;
-        const result = await collection.insertOne({ password: hash, email });
+        const result = await collection.insertOne({ password: hash, email, username });
         debugger;
         const user = result.ops[0];
         debugger;
@@ -86,7 +86,7 @@ export default async function ({ req, res, collection }) {
       }
     }
   } catch (error) {
-    const er= error
+  
     debugger;
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.write(JSON.stringify({ error }));

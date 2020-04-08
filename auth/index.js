@@ -16,6 +16,7 @@ export default function (req, res) {
   const collectionName = 'users';
   const database = req.client.db('auth');
   const collection = database.collection(collectionName);
+  req.collection = collection;
   debugger;
   switch (true) {
     case url.includes('/login'):

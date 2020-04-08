@@ -2,6 +2,7 @@
 /* eslint-disable indent */
 import crudOperation from './crud/crud';
 import authOperation from './auth/index';
+import seedOperation from './seed';
 const url = 'mongodb://localhost:27017';
 const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(url, {
@@ -10,6 +11,7 @@ const client = new MongoClient(url, {
 });
 
 export default async function httpRoute(req, res) {
+  req.auth = null;
   const clnt = await client.connect();
   req.client = clnt;
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -44,6 +46,10 @@ export default async function httpRoute(req, res) {
             case url.includes('/crud'):
               debugger;
               crudOperation(req, res);
+              break;
+            case url.includes('/seed'):
+              debugger;
+              seedOperation(req, res);
               break;
             default:
               break;

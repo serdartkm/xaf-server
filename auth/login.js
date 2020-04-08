@@ -1,25 +1,28 @@
 import apiurl from 'url';
 import * as validations from './validations/validations';
 import httpStatus from './http-status';
+import { getCredentials } from './http-auth';
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 export default async function ({ req, res, collection }) {
+  debugger;
   try {
     let user = null;
     let resBcrypt = null;
     debugger;
-    let { emailorusername, password } = apiurl.parse(req.url, true).query;
+    let { emailorusername, password } = getCredentials(req);
+    debugger;
     let errors = [];
 
     //user sent empty email or username 410 tested----------------------------
     if (validations.isEmptyEmailOrUsername({ emailorusername })) {
-      debugger
+      debugger;
       errors.push(httpStatus.emailorusernameNotValid);
     }
     // user sent empty password 409 tested -----------------------------------
     if (validations.isEmptyPassword({ password })) {
-      debugger
+      debugger;
       errors.push(httpStatus.emptyStringNotValid);
     }
     if (errors.length > 0) {
