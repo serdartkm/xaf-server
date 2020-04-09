@@ -56,7 +56,7 @@ export default async function ({ req, res, collection }) {
             if (user === null) {
               debugger;
               // email is not registered 408  ----------------------------
-              errors.push(httpStatus.emailIsNotRegistered);
+              errors.push(httpStatus.credentialInvalid);
               res.writeHead(400, { 'Content-Type': 'application/json' });
               res.write(JSON.stringify({ errors }));
               res.end();

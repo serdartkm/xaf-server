@@ -19,6 +19,7 @@ export default async function loginSeed(req, res) {
     res.end();
     debugger;
   } catch (error) {
+    let err = error;
     debugger;
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.write(JSON.stringify({ error }));

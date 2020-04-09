@@ -4,8 +4,9 @@ import httpRoute from '../../http-route';
 const request = require('supertest');
 describe('login.test.js', () => {
   it('empty useroremail and password 410,409', (done) => {
+    debugger;
     request(httpRoute)
-      .get('/auth/login')
+      .get('/auth/login/')
       .set('Accept', 'application/json')
       .set('authorization', 'Basic Og==')
       .expect(400, { errors: ['410', '409'] })
@@ -20,14 +21,14 @@ describe('login.test.js', () => {
       .end(done);
   });
 
-  it('emailIsNotRegistered 408', (done) => {
+  it('emailIsNotRegistered 401', (done) => {
     global.findOne = null;
 
     request(httpRoute)
       .get('/auth/login')
       .set('Accept', 'application/json')
       .set('authorization', 'Basic dGVzdEBnbWFpbC5jb206RHJhZ29uZEZGRmx5IQ==')
-      .expect(400, { errors: ['408'] })
+      .expect(400, { errors: ['401'] })
       .end(done);
   });
   it('usernameIsNotRegistered 411', (done) => {

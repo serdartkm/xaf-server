@@ -11,12 +11,18 @@ const client = new MongoClient(url, {
 });
 
 export default async function httpRoute(req, res) {
+  const { url } = req;
+  const authRegex = /.*\/auth\/.*/;
+  const crudRegex = /.*\/crud\/.*/;
+  const seedRegex = /.*\/seed\/.*/;
+  debugger;
+
   req.auth = null;
   const clnt = await client.connect();
   req.client = clnt;
   res.setHeader('Access-Control-Allow-Origin', '*');
   let data = [];
-  const { url } = req;
+
   let responseHeader = {
     'access-control-allow-origin': '*',
     'access-control-allow-methods': 'GET,POST,PUT,DELETE,OPTIONS',
@@ -39,15 +45,15 @@ export default async function httpRoute(req, res) {
           const body = JSON.parse(data);
           req.body = body;
           switch (true) {
-            case url.includes('/auth'):
+            case authRegex.test(url):
               debugger;
               authOperation(req, res);
               break;
-            case url.includes('/crud'):
+            case crudRegex.test(url):
               debugger;
               crudOperation(req, res);
               break;
-            case url.includes('/seed'):
+            case seedRegex.test(url):
               debugger;
               seedOperation(req, res);
               break;
@@ -59,13 +65,17 @@ export default async function httpRoute(req, res) {
       break;
     case 'GET':
       switch (true) {
-        case url.includes('/auth'):
+        case authRegex.test(url):
           debugger;
           authOperation(req, res);
           break;
-        case url.includes('/crud'):
+        case crudRegex.test(url):
           debugger;
           crudOperation(req, res);
+          break;
+        case seedRegex.test(url):
+          debugger;
+          seedOperation(req, res);
           break;
         default:
           break;
