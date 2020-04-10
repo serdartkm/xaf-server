@@ -2,11 +2,11 @@ import * as validations from '../validations';
 describe('validateUsernameOrEmail', () => {
   it('isValidUsername true', () => {
     expect(
-      validations.isValidUsername({ emailorusername: 'tkmhousenew' })
+      validations.isValidUsername({ username: 'tkmhousenew' })
     ).toBe(true);
   });
   it('isValidUsername false', () => {
-    expect(validations.isValidUsername({ emailorusername: '11' })).toBe(false);
+    expect(validations.isValidUsername({ username: '11' })).toBe(false);
   });
   it('isValidEmail true', () => {
     expect(

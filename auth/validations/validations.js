@@ -1,7 +1,7 @@
 import { emailRegex, usernameRegex, passwordRegex } from './validationRegex';
 
 export function isValidUsername({ username }) {
-  debugger
+  debugger;
   const usrname = new RegExp(usernameRegex);
   if (usrname.test(username)) {
     return true;
@@ -11,7 +11,7 @@ export function isValidUsername({ username }) {
 }
 
 export function isValidEmail({ email }) {
-  debugger
+  debugger;
   const eml = new RegExp(emailRegex);
   if (eml.test(email)) {
     return true;
@@ -20,7 +20,7 @@ export function isValidEmail({ email }) {
   }
 }
 export function isValidPasspword({ password }) {
-  debugger
+  debugger;
   const psw = new RegExp(passwordRegex);
   if (psw.test(password)) {
     return true;
@@ -29,8 +29,16 @@ export function isValidPasspword({ password }) {
   }
 }
 
+export function passwordsMatch({ password, confirm }) {
+  if (password !== '' && password !== confirm) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 export function isEmptyEmailOrUsername({ emailorusername }) {
-  debugger
+  debugger;
   if (
     emailorusername === '' ||
     emailorusername === undefined ||
@@ -43,7 +51,7 @@ export function isEmptyEmailOrUsername({ emailorusername }) {
 }
 
 export function isEmptyPassword({ password }) {
-  debugger
+  debugger;
   if (password === '' || password === undefined || password === null) {
     return true;
   } else {

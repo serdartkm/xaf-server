@@ -14,6 +14,9 @@ export class MongoClient {
               insertOne: () => {
                 return global.insertOne;
               },
+              findOneAndUpdate: () => {
+                return global.findOneAndUpdate;
+              },
             };
           },
         };
@@ -21,3 +24,5 @@ export class MongoClient {
     };
   };
 }
+
+export class ObjectID {}

@@ -69,7 +69,7 @@ describe('http-auth', () => {
     });
   });
 
-  it.only('Authentication header exists', (done) => {
+  it('Authentication header exists', (done) => {
     debugger;
     request(httpRoute)
       .get('/auth/login')
