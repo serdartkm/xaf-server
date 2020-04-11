@@ -3,6 +3,10 @@ module.exports = {
     return global.sign;
   },
   verify: () => {
-    return global.verify;
+    if (global.verify.reject) {
+      return Promise.reject({ message: global.verify.reject.message });
+    } else {
+      return Promise.reject({ message: global.verify.resolve.message });
+    }
   },
 };

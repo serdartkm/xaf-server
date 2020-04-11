@@ -1,11 +1,17 @@
 import { ObjectID } from 'mongodb';
+import * as validations from './validations/validations';
+import httpStatus from './http-status';
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 export default async function changePassword({ req, res, collection }) {
   debugger;
+
   try {
     const { emailorusername, password, current, confirm, token } = req.body;
+    let user = null;
+    let resBcrypt = null;
+    debugger;
     if (token) {
       debugger;
       const decoded = await jwt.verify(token, process.env.secret);
@@ -21,11 +27,11 @@ export default async function changePassword({ req, res, collection }) {
         { $set: { password: hash } }
       );
       debugger;
-      const user = result.value;
+      user = result.value;
       debugger;
       const payload = { id, name: user.email };
       debugger;
-      const newToken = await jwt.sign(payload, process.env.secret, {
+      const newToken = jwt.sign(payload, process.env.secret, {
         expiresIn: '300d',
       });
       debugger;
@@ -43,7 +49,7 @@ export default async function changePassword({ req, res, collection }) {
         errors.push(httpStatus.emailorusernameNotValid);
       }
       // user sent empty password 409 tested -----------------------------------
-      if (validations.isEmptyPassword({ current })) {
+      if (validations.isEmptyPassword({ password: current })) {
         debugger;
         errors.push(httpStatus.emptyStringNotValid);
       }
@@ -57,30 +63,92 @@ export default async function changePassword({ req, res, collection }) {
       }
       // user sent empty password 409 tested ----------------------------------
       if (
-        validations.isEmptyPassword({ confirm }) ||
-        validations.passwordsMatch({ password, confirm })
+        validations.isEmptyPassword({ password: confirm }) ||
+        !validations.passwordsMatch({ password, confirm })
       ) {
         debugger;
         errors.push(httpStatus.passwordDoNotMatch);
       }
+
       if (errors.length > 0) {
+        debugger;
         res.statusCode = 400;
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.write(JSON.stringify({ errors }));
         res.end();
       } else {
         //valid email
-        if (validations.isValidEmail({ emailorusername })) {
-          updatePassword({
-            emailorusername: 'emailorusername',
-            value: emailorusername,
-          });
+        if (validations.isValidEmail({ email: emailorusername })) {
+          debugger;
+          let user = await collection.findOne({ email: emailorusername });
+          debugger;
+          if (user) {
+            debugger;
+            resBcrypt = await bcrypt.compare(password, user.password);
+            debugger;
+            if (resBcrypt) {
+              debugger;
+              updatePassword({
+                emailorusername: 'email',
+                value: emailorusername,
+                password,
+                collection,
+                res,
+              });
+            } else {
+              debugger;
+              //invalid credentials
+              errors.push(httpStatus.credentialInvalid);
+              res.statusCode = 400;
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.write(JSON.stringify({ errors }));
+              res.end();
+            }
+          } else {
+            debugger;
+            //email does not exist
+            errors.push(httpStatus.credentialInvalid);
+            res.statusCode = 400;
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.write(JSON.stringify({ errors }));
+            res.end();
+          }
         } else {
-          //valid username
-          updatePassword({
-            emailorusername: 'username',
-            value: emailorusername,
-          });
+          //valid username-------------------------------------------
+          debugger;
+          user = await collection.findOne({ username: emailorusername });
+          debugger;
+          if (user) {
+            debugger;
+            resBcrypt = await bcrypt.compare(password, user.password);
+            debugger;
+            if (resBcrypt) {
+              debugger;
+              updatePassword({
+                emailorusername: 'username',
+                value: emailorusername,
+                password,
+                collection,
+                res,
+              });
+            } else {
+              debugger;
+              //invalid credentials
+              errors.push(httpStatus.credentialInvalid);
+              res.statusCode = 400;
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.write(JSON.stringify({ errors }));
+              res.end();
+            }
+          } else {
+            debugger;
+            //username does not exist
+            errors.push(httpStatus.credentialInvalid);
+            res.statusCode = 400;
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.write(JSON.stringify({ errors }));
+            res.end();
+          }
         }
       }
     }
@@ -94,7 +162,13 @@ export default async function changePassword({ req, res, collection }) {
   }
 }
 
-async function updatePassword({ value, emailorusername }) {
+async function updatePassword({
+  value,
+  emailorusername,
+  password,
+  collection,
+  res,
+}) {
   debugger;
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);

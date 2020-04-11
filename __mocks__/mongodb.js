@@ -7,7 +7,7 @@ export class MongoClient {
         return {
           collection: () => {
             return {
-              findOne: function () {
+              findOne: () => {
                 debugger;
                 return global.findOne;
               },
