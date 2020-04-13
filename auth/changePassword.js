@@ -82,11 +82,11 @@ export default async function changePassword({ req, res, collection }) {
         //valid email
         if (validations.isValidEmail({ email: emailorusername })) {
           debugger;
-          let user = await collection.findOne({ email: emailorusername });
+          user = await collection.findOne({ email: emailorusername });
           debugger;
           if (user) {
             debugger;
-            resBcrypt = await bcrypt.compare(password, user.password);
+            resBcrypt = await bcrypt.compare(current, user.password);
             debugger;
             if (resBcrypt) {
               debugger;
