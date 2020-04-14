@@ -6,11 +6,9 @@ const ObjectID = require('mongodb').ObjectId;
 import apiurl from 'url';
 import login from './login';
 import signup from './signup';
-import changePassword from './changePassword'
-
-
+import changePassword from './changePassword';
+import recover from './recover';
 const profile = require('./profile');
-const recover = require('./recover');
 
 export default function (req, res) {
   const { url } = req;
@@ -31,7 +29,8 @@ export default function (req, res) {
       debugger;
       changePassword({ req, res, collection });
       break;
-    case url.includes('/recover'):
+    case url.includes('/requestpasschange'):
+      debugger;
       recover({ req, res, collection });
       break;
     case url.includes('/profile'):
