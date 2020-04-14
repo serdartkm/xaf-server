@@ -36,7 +36,7 @@ export default async function ({ req, res, collection }) {
           expiresIn: '10h',
         });
         debugger;
-        const link = `${process.env.resetUrl}/${token}`;
+        const link = `${process.env.resetUrl}?token=${token}`;
         let transporter = nodemailer.createTransport({
           host: 'smtp.googlemail.com',
           port: 465,
